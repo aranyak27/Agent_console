@@ -1,15 +1,9 @@
-import { Search, AlertTriangle, Clock, CheckCircle2, XCircle, ChevronLeft, ChevronRight } from "lucide-react";
+import { Search, CheckCircle2, XCircle, Clock, AlertTriangle, ChevronLeft, ChevronRight } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 import type { RefundCase } from "@shared/schema";
 import { cn } from "@/lib/utils";
-
-interface FilterOption {
-  label: string;
-  value: string;
-}
 
 interface CaseQueueProps {
   cases: RefundCase[];
@@ -19,33 +13,39 @@ interface CaseQueueProps {
   onStatusFilter: (v: string) => void;
   searchQuery: string;
   onSearch: (q: string) => void;
-  filterOptions: FilterOption[];
   totalCount: number;
   collapsed: boolean;
   onToggleCollapse: () => void;
 }
 
+const FILTER_OPTS = [
+  { label: "All", value: "all" },
+  { label: "High", value: "high_risk" },
+  { label: "Medium", value: "medium_risk" },
+  { label: "Resolved", value: "approved" },
+];
+
 function getStatusDot(status: string) {
   switch (status) {
-    case "high_risk": return <span className="w-1.5 h-1.5 rounded-full bg-rose-500 shrink-0 mt-1" />;
-    case "medium_risk": return <span className="w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0 mt-1" />;
+    case "high_risk": return <span className="w-1.5 h-1.5 rounded-full bg-rose-500 shrink-0 mt-[3px]" />;
+    case "medium_risk": return <span className="w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0 mt-[3px]" />;
     case "auto_approved":
-    case "approved": return <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0 mt-1" />;
-    case "denied": return <span className="w-1.5 h-1.5 rounded-full bg-slate-400 shrink-0 mt-1" />;
-    case "escalated": return <span className="w-1.5 h-1.5 rounded-full bg-violet-500 shrink-0 mt-1" />;
-    default: return <span className="w-1.5 h-1.5 rounded-full bg-slate-300 shrink-0 mt-1" />;
+    case "approved": return <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0 mt-[3px]" />;
+    case "denied": return <span className="w-1.5 h-1.5 rounded-full bg-slate-400 shrink-0 mt-[3px]" />;
+    case "escalated": return <span className="w-1.5 h-1.5 rounded-full bg-violet-500 shrink-0 mt-[3px]" />;
+    default: return <span className="w-1.5 h-1.5 rounded-full bg-slate-300 shrink-0 mt-[3px]" />;
   }
 }
 
 function getStatusLabel(status: string) {
   switch (status) {
-    case "high_risk": return <span className="text-xs text-rose-600 dark:text-rose-400 font-medium">High</span>;
-    case "medium_risk": return <span className="text-xs text-amber-600 dark:text-amber-400 font-medium">Med</span>;
-    case "auto_approved": return <span className="text-xs text-emerald-600 dark:text-emerald-400">Auto-OK</span>;
-    case "approved": return <span className="text-xs text-emerald-600 dark:text-emerald-400">Approved</span>;
-    case "denied": return <span className="text-xs text-muted-foreground">Denied</span>;
-    case "escalated": return <span className="text-xs text-violet-600 dark:text-violet-400">Escalated</span>;
-    default: return <span className="text-xs text-muted-foreground">Pending</span>;
+    case "high_risk": return <span className="text-[10px] text-rose-600 dark:text-rose-400 font-medium whitespace-nowrap">High</span>;
+    case "medium_risk": return <span className="text-[10px] text-amber-600 dark:text-amber-400 font-medium whitespace-nowrap">Med</span>;
+    case "auto_approved": return <span className="text-[10px] text-emerald-600 dark:text-emerald-400 whitespace-nowrap">Auto</span>;
+    case "approved": return <span className="text-[10px] text-emerald-600 dark:text-emerald-400 whitespace-nowrap">OK</span>;
+    case "denied": return <span className="text-[10px] text-muted-foreground whitespace-nowrap">Denied</span>;
+    case "escalated": return <span className="text-[10px] text-violet-600 dark:text-violet-400 whitespace-nowrap">Esc.</span>;
+    default: return <span className="text-[10px] text-muted-foreground whitespace-nowrap">Pending</span>;
   }
 }
 
@@ -58,20 +58,13 @@ function getScoreColor(score: number) {
 function formatReason(reason: string) {
   const map: Record<string, string> = {
     no_show: "No Show",
-    technical_issue: "Tech Issue",
-    cancellation: "Cancellation",
+    technical_issue: "Tech",
+    cancellation: "Cancel",
     weather: "Weather",
     other: "Other",
   };
   return map[reason] || reason;
 }
-
-const FILTER_OPTS = [
-  { label: "All", value: "all" },
-  { label: "High", value: "high_risk" },
-  { label: "Medium", value: "medium_risk" },
-  { label: "Resolved", value: "approved" },
-];
 
 export function CaseQueue({
   cases,
@@ -99,7 +92,7 @@ export function CaseQueue({
           <ChevronRight className="w-4 h-4" />
         </Button>
         <div
-          className="text-xs text-muted-foreground font-medium tracking-widest"
+          className="text-[10px] text-muted-foreground font-medium tracking-widest select-none"
           style={{ writingMode: "vertical-rl", transform: "rotate(180deg)" }}
         >
           {cases.length} cases
@@ -109,12 +102,12 @@ export function CaseQueue({
   }
 
   return (
-    <div className="w-72 shrink-0 flex flex-col border-r border-border bg-sidebar">
-      <div className="p-3 border-b border-sidebar-border">
-        <div className="flex items-center justify-between mb-2.5 gap-2">
+    <div className="flex flex-col h-full overflow-hidden bg-sidebar">
+      <div className="p-3 border-b border-sidebar-border shrink-0">
+        <div className="flex items-center justify-between mb-2 gap-2">
           <h2 className="font-semibold text-sm text-sidebar-foreground">Queue</h2>
-          <div className="flex items-center gap-2">
-            <span className="text-xs text-muted-foreground">{cases.length}/{totalCount}</span>
+          <div className="flex items-center gap-1.5">
+            <span className="text-[10px] text-muted-foreground">{cases.length}/{totalCount}</span>
             <Button
               size="icon"
               variant="ghost"
@@ -127,8 +120,10 @@ export function CaseQueue({
             </Button>
           </div>
         </div>
+
+        {/* Search */}
         <div className="relative mb-2">
-          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
+          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3 h-3 text-muted-foreground" />
           <Input
             placeholder="Search..."
             value={searchQuery}
@@ -137,14 +132,16 @@ export function CaseQueue({
             data-testid="input-search-cases"
           />
         </div>
-        <div className="flex gap-1">
+
+        {/* Filter pills — use flex-wrap + whitespace-nowrap to prevent truncation */}
+        <div className="flex flex-wrap gap-1">
           {FILTER_OPTS.map((opt) => (
             <button
               key={opt.value}
               onClick={() => onStatusFilter(opt.value)}
               data-testid={`filter-${opt.value}`}
               className={cn(
-                "flex-1 px-1.5 py-0.5 text-xs rounded border transition-colors",
+                "whitespace-nowrap shrink-0 px-2 py-0.5 text-xs rounded border transition-colors",
                 statusFilter === opt.value
                   ? "bg-primary text-primary-foreground border-primary"
                   : "bg-background text-muted-foreground border-border hover:bg-muted"
@@ -156,12 +153,11 @@ export function CaseQueue({
         </div>
       </div>
 
+      {/* Case list */}
       <ScrollArea className="flex-1">
         <div className="p-2 space-y-0.5">
           {cases.length === 0 ? (
-            <div className="py-8 text-center text-muted-foreground text-xs">
-              No cases match your filters
-            </div>
+            <div className="py-8 text-center text-muted-foreground text-xs">No cases match your filters</div>
           ) : (
             cases.map((c) => (
               <button
@@ -179,10 +175,10 @@ export function CaseQueue({
                   {getStatusDot(c.status)}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between gap-1 mb-0.5">
-                      <span className="text-xs font-mono text-muted-foreground">{c.id}</span>
-                      <div className="flex items-center gap-1.5">
+                      <span className="text-[10px] font-mono text-muted-foreground">{c.id}</span>
+                      <div className="flex items-center gap-1 shrink-0">
                         {c.riskAssessment && (
-                          <span className={cn("text-xs font-semibold tabular-nums", getScoreColor(c.riskAssessment.totalScore))}>
+                          <span className={cn("text-[10px] font-bold tabular-nums", getScoreColor(c.riskAssessment.totalScore))}>
                             {c.riskAssessment.totalScore}
                           </span>
                         )}
@@ -190,10 +186,10 @@ export function CaseQueue({
                       </div>
                     </div>
                     <div className="font-medium text-xs text-sidebar-foreground truncate">{c.customerName}</div>
-                    <div className="text-xs text-muted-foreground truncate mt-0.5">{c.experienceName}</div>
+                    <div className="text-[10px] text-muted-foreground truncate mt-0.5">{c.experienceName}</div>
                     <div className="flex items-center justify-between mt-1">
-                      <span className="text-xs text-muted-foreground">{formatReason(c.refundReason)}</span>
-                      <span className="text-xs font-medium text-foreground">${c.refundAmount.toLocaleString()}</span>
+                      <span className="text-[10px] text-muted-foreground">{formatReason(c.refundReason)}</span>
+                      <span className="text-[10px] font-medium text-foreground">${c.refundAmount.toLocaleString()}</span>
                     </div>
                   </div>
                 </div>

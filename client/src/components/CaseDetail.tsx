@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
@@ -24,6 +24,10 @@ interface CaseDetailProps {
   onUpdate: (updated: RefundCase) => void;
 }
 
+const SIDEBAR_MIN = 160;
+const SIDEBAR_MAX = 420;
+const SIDEBAR_DEFAULT = 240;
+
 function getRiskIndicator(category: string) {
   if (category === "high_risk") {
     return { dot: "bg-rose-500", label: "High Risk", text: "text-rose-600 dark:text-rose-400" };
@@ -47,15 +51,34 @@ function getReasonLabel(reason: string) {
 
 export function CaseDetail({ refundCase, onUpdate }: CaseDetailProps) {
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarWidth, setSidebarWidth] = useState(SIDEBAR_DEFAULT);
+
   const { riskAssessment } = refundCase;
   const score = riskAssessment?.totalScore ?? 0;
   const category = riskAssessment?.category ?? "auto_approve";
   const risk = getRiskIndicator(category);
   const isResolved = ["approved", "denied", "escalated", "auto_approved"].includes(refundCase.status);
 
+  const handleSidebarResizeStart = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    const startX = e.clientX;
+    const startWidth = sidebarWidth;
+
+    const onMove = (ev: MouseEvent) => {
+      const next = Math.max(SIDEBAR_MIN, Math.min(SIDEBAR_MAX, startWidth - (ev.clientX - startX)));
+      setSidebarWidth(next);
+    };
+    const onUp = () => {
+      document.removeEventListener("mousemove", onMove);
+      document.removeEventListener("mouseup", onUp);
+    };
+    document.addEventListener("mousemove", onMove);
+    document.addEventListener("mouseup", onUp);
+  }, [sidebarWidth]);
+
   return (
     <div className="flex h-full bg-background">
-      {/* Center: main content */}
+      {/* ── Center: main content ── */}
       <div className="flex flex-col flex-1 min-w-0 overflow-hidden">
 
         {/* Slim status bar */}
@@ -79,7 +102,7 @@ export function CaseDetail({ refundCase, onUpdate }: CaseDetailProps) {
           </div>
         </div>
 
-        {/* Compact case info bar */}
+        {/* Compact info bar */}
         <div className="flex items-center gap-3 px-4 py-1.5 border-b border-border bg-muted/20 shrink-0 flex-wrap">
           <div className="flex items-center gap-1.5">
             <User className="w-3 h-3 text-muted-foreground" />
@@ -166,9 +189,21 @@ export function CaseDetail({ refundCase, onUpdate }: CaseDetailProps) {
         )}
       </div>
 
-      {/* Collapsible Customer 360 sidebar */}
+      {/* ── Sidebar resize handle ── */}
+      {sidebarOpen && (
+        <div
+          className="w-1 shrink-0 cursor-col-resize bg-border hover:bg-primary/40 active:bg-primary/60 transition-colors"
+          onMouseDown={handleSidebarResizeStart}
+          title="Drag to resize sidebar"
+        />
+      )}
+
+      {/* ── Customer 360 sidebar ── */}
       {sidebarOpen ? (
-        <div className="w-60 shrink-0 border-l border-border overflow-hidden flex flex-col">
+        <div
+          style={{ width: sidebarWidth }}
+          className="shrink-0 overflow-hidden flex flex-col border-l border-border"
+        >
           <div className="flex items-center justify-between px-3 py-2 border-b border-border shrink-0">
             <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Customer 360</span>
             <Button

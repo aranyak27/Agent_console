@@ -103,6 +103,83 @@ Headout Customer Support Team`,
   },
 ];
 
+export interface ApprovalTemplate {
+  id: string;
+  name: string;
+  subject: string;
+  body: string;
+}
+
+export const approvalTemplates: ApprovalTemplate[] = [
+  {
+    id: "A1",
+    name: "Standard Approval",
+    subject: "Your Refund Request — Case #{{caseId}} — Approved",
+    body: `Dear {{customerName}},
+
+We are pleased to inform you that your refund request for booking {{bookingId}} has been approved.
+
+Refund amount: {{refundAmount}}
+Expected processing time: 5–7 business days
+Refund method: Original payment method
+
+We apologize for any inconvenience and hope to welcome you back to Headout soon.
+
+Warm regards,
+Headout Customer Support Team`,
+  },
+  {
+    id: "A2",
+    name: "Goodwill Approval",
+    subject: "Your Refund Request — Case #{{caseId}} — Approved",
+    body: `Dear {{customerName}},
+
+Thank you for your patience while we reviewed your refund request for booking {{bookingId}}.
+
+We understand that circumstances don't always go as planned. As a gesture of goodwill, we are pleased to approve your refund of {{refundAmount}}.
+
+Your refund will be processed within 5–7 business days to your original payment method.
+
+We truly value your continued support and look forward to welcoming you back soon.
+
+Kind regards,
+Headout Customer Support Team`,
+  },
+  {
+    id: "A3",
+    name: "Loyalty Appreciation Approval",
+    subject: "Your Refund Request — Case #{{caseId}} — Approved",
+    body: `Dear {{customerName}},
+
+As a valued long-standing member of the Headout community, we are happy to approve your refund request for booking {{bookingId}}.
+
+Refund amount: {{refundAmount}}
+Processing time: 5–7 business days
+
+Your loyalty means a great deal to us. We look forward to welcoming you back for more great experiences.
+
+With gratitude,
+Headout Customer Support Team`,
+  },
+  {
+    id: "A4",
+    name: "Experience Credit Offer",
+    subject: "Your Refund Request — Case #{{caseId}} — Credit Offered",
+    body: `Dear {{customerName}},
+
+Thank you for contacting Headout Support regarding booking {{bookingId}}.
+
+While a direct cash refund is not available under our standard policy, we would like to offer you an Headout Experience Credit of {{refundAmount}} valid for 12 months — giving you the flexibility to rebook any experience at your convenience.
+
+To accept this offer, please reply to this email and we'll apply the credit to your account within 24 hours.
+
+We hope to have the opportunity to make your next experience exceptional.
+
+Best regards,
+Headout Customer Support Team`,
+  },
+];
+
 export function getTemplatesForRules(ruleIds: string[]): PolicyTemplate[] {
   return policyTemplates.filter((t) =>
     t.triggerRules.some((r) => ruleIds.includes(r))
