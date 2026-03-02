@@ -194,7 +194,7 @@ export function TicketChatView({ refundCase }: TicketChatViewProps) {
         customerTenureMonths: refundCase.customerTenureMonths,
         previousNoShowCount: refundCase.previousNoShowCount,
       });
-      return res as { draft: string };
+      return (await res.json()) as { draft: string };
     },
     onSuccess: (data) => {
       setReplyBody(data.draft);
@@ -377,7 +377,7 @@ export function TicketChatView({ refundCase }: TicketChatViewProps) {
           />
           <div className="flex items-center justify-between mt-2">
             <span className="text-xs text-muted-foreground">
-              {replyBody.length} characters
+              {(replyBody ?? "").length} characters
             </span>
             <div className="flex items-center gap-2">
               <Button
@@ -393,7 +393,7 @@ export function TicketChatView({ refundCase }: TicketChatViewProps) {
                 size="sm"
                 className="h-8 gap-1.5"
                 onClick={handleSend}
-                disabled={!replyBody.trim()}
+                disabled={!(replyBody ?? "").trim()}
                 data-testid="button-send-reply"
               >
                 {isSent ? (
