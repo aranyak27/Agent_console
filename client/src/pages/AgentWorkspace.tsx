@@ -107,6 +107,7 @@ export default function AgentWorkspace() {
         <div className="flex-1 overflow-hidden min-w-0">
           {selectedCase ? (
             <CaseDetail
+              key={selectedCase.id}
               refundCase={selectedCase}
               onUpdate={handleCaseUpdate}
             />
