@@ -1,37 +1,36 @@
-import { type User, type InsertUser } from "@shared/schema";
+import type { AuditEntry, UpdateCase } from "@shared/schema";
 import { randomUUID } from "crypto";
 
-// modify the interface with any CRUD methods
-// you might need
-
 export interface IStorage {
-  getUser(id: string): Promise<User | undefined>;
-  getUserByUsername(username: string): Promise<User | undefined>;
-  createUser(user: InsertUser): Promise<User>;
+  getAuditEntries(caseId: string): Promise<AuditEntry[]>;
+  addAuditEntry(entry: Omit<AuditEntry, "id">): Promise<AuditEntry>;
+  updateCase(update: UpdateCase): Promise<{ success: boolean }>;
 }
 
 export class MemStorage implements IStorage {
-  private users: Map<string, User>;
+  private auditEntries: Map<string, AuditEntry[]>;
+  private caseUpdates: Map<string, UpdateCase>;
 
   constructor() {
-    this.users = new Map();
+    this.auditEntries = new Map();
+    this.caseUpdates = new Map();
   }
 
-  async getUser(id: string): Promise<User | undefined> {
-    return this.users.get(id);
+  async getAuditEntries(caseId: string): Promise<AuditEntry[]> {
+    return this.auditEntries.get(caseId) || [];
   }
 
-  async getUserByUsername(username: string): Promise<User | undefined> {
-    return Array.from(this.users.values()).find(
-      (user) => user.username === username,
-    );
-  }
-
-  async createUser(insertUser: InsertUser): Promise<User> {
+  async addAuditEntry(entry: Omit<AuditEntry, "id">): Promise<AuditEntry> {
     const id = randomUUID();
-    const user: User = { ...insertUser, id };
-    this.users.set(id, user);
-    return user;
+    const full: AuditEntry = { ...entry, id };
+    const existing = this.auditEntries.get(entry.caseId) || [];
+    this.auditEntries.set(entry.caseId, [...existing, full]);
+    return full;
+  }
+
+  async updateCase(update: UpdateCase): Promise<{ success: boolean }> {
+    this.caseUpdates.set(update.caseId, update);
+    return { success: true };
   }
 }
 
