@@ -1,0 +1,51 @@
+This prompt is designed to help you build a high-fidelity, functional prototype in Replit. It incorporates the specific logic from your Headout PRD  while layering in the enterprise-grade UI/UX patterns typical of a Sprinklr agent console.
+
+Replit Development Prompt
+Role: Senior Full-Stack Engineer & UX Designer.
+Objective: Build a functional "Refund Abuse Detection System" (RADS) Agent Console prototype.
+Core Functionality (From PRD):
+Risk Scoring Engine: Implement the 8-rule deterministic logic (R1 to R8) using the 6 identified data points.
+
+
+Classification Workflow: Requests must be dynamically categorized into "Auto-Approve" (<30 pts), "Medium Risk" (30-70 pts), and "High Risk" (70+ pts).
+
+
+Agent Reasoning Panel: For flagged cases, display the specific rule IDs triggered, the score added, and detailed "Why" evidence.
+
+
+Edge Case Handling: Implement "Incomplete Data" defaults (Moderate Risk) and "System Outage" timeouts.
+
+
+UI/UX Requirements (Sprinklr-Inspired):
+Dual-Pane Layout: A left-hand "Case Queue" with status badges and a right-hand "Case Detail" view.
+The "Sprinklr" Smart Bar: A sidebar/header containing "Customer 360" data (Tenure, History, Engagement).
+
+
+Action Hub: A dedicated section for "Approve," "Escalate," and "Deny." The "Deny" button must trigger a modal with the PRD’s "Policy Template Engine".
+
+
+Performance Dashboard: A tab for Leads to view manual review reduction (Target 70%+) and Fraud Reduction metrics.
+
+
+Technical Specifications:
+Framework: Use React or Next.js for the frontend.
+Data Simulation: Create a mock_data.json containing 20+ refund requests with varying data points (e.g., high refund counts, "No Show" reasons, varied tenure) to demonstrate the scoring engine live.
+State Management: Selecting a case in the queue must instantly update the Scoring Engine logic and Reasoning Panel in the detail view.
+Interactive Elements:
+Override Button: Allow agents to manually change a "High Risk" to "Approved," requiring a text-area justification (Audit Log).
+
+
+Evidence Links: Add clickable "View Logs" buttons that show a mock JSON modal of email engagement.
+
+
+Drafting Instructions: "Please create a multi-tabbed dashboard. The main view is the 'Agent Workspace.' Ensure the 'Reasoning Panel' specifically highlights triggers like R1 (Serial Refunder) and R3 (No-Show with Engagement) with the exact point weights defined in the PRD. Use a clean, enterprise-dark or light theme with high-contrast risk badges (Red/Orange/Green)."
+
+Key Sprinklr Features to Include
+Since you have experience at Sprinklr, you might want to ask the Replit AI to specifically add these "pro" features:
+Audit Trail: A small vertical timeline showing when the system flagged the case and when an agent viewed it.
+
+
+One-Click Templates: A "Reply" box pre-populated with the "Serial Refunder" denial text when R1 or R2 is triggered.
+
+
+
