@@ -157,7 +157,7 @@ function MessageBubble({ msg }: { msg: TicketMessage }) {
 
 export function TicketChatView({ refundCase }: TicketChatViewProps) {
   const { toast } = useToast();
-  const ticket = getTicketForCase(refundCase.id);
+  const ticket = getTicketForCase(refundCase);
   const [messages, setMessages] = useState<TicketMessage[]>(ticket.messages);
   const [replyBody, setReplyBody] = useState("");
   const [cc, setCc] = useState("");
