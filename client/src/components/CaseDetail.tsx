@@ -9,6 +9,7 @@ import { Customer360 } from "@/components/Customer360";
 import { ReasoningPanel } from "@/components/ReasoningPanel";
 import { ActionHub } from "@/components/ActionHub";
 import { AuditTrail } from "@/components/AuditTrail";
+import { TicketChatView } from "@/components/TicketChatView";
 import { cn } from "@/lib/utils";
 import {
   AlertTriangle,
@@ -148,9 +149,16 @@ export function CaseDetail({ refundCase, onUpdate }: CaseDetailProps) {
         </div>
 
         {/* Main Content Tabs */}
-        <Tabs defaultValue="reasoning" className="flex flex-col flex-1 overflow-hidden">
+        <Tabs defaultValue="chat" className="flex flex-col flex-1 overflow-hidden">
           <div className="px-4 border-b border-border shrink-0 bg-background">
             <TabsList className="h-9 bg-transparent gap-1 rounded-none p-0">
+              <TabsTrigger
+                value="chat"
+                className="text-xs rounded-md data-[state=active]:bg-secondary data-[state=active]:text-secondary-foreground"
+                data-testid="tab-chat"
+              >
+                Ticket & Chat
+              </TabsTrigger>
               <TabsTrigger
                 value="reasoning"
                 className="text-xs rounded-md data-[state=active]:bg-secondary data-[state=active]:text-secondary-foreground"
@@ -167,6 +175,10 @@ export function CaseDetail({ refundCase, onUpdate }: CaseDetailProps) {
               </TabsTrigger>
             </TabsList>
           </div>
+
+          <TabsContent value="chat" className="flex-1 overflow-hidden m-0 data-[state=active]:flex data-[state=active]:flex-col">
+            <TicketChatView refundCase={refundCase} />
+          </TabsContent>
 
           <TabsContent value="reasoning" className="flex-1 overflow-hidden m-0 data-[state=active]:flex data-[state=active]:flex-col">
             <ScrollArea className="flex-1">
