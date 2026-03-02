@@ -3,7 +3,6 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
 import type { RefundCase } from "@shared/schema";
 import { Customer360 } from "@/components/Customer360";
 import { ReasoningPanel } from "@/components/ReasoningPanel";
@@ -12,15 +11,12 @@ import { AuditTrail } from "@/components/AuditTrail";
 import { TicketChatView } from "@/components/TicketChatView";
 import { cn } from "@/lib/utils";
 import {
-  AlertTriangle,
   CheckCircle2,
-  Clock,
-  ExternalLink,
-  Mail,
-  User,
-  CalendarDays,
+  ChevronLeft,
+  ChevronRight,
   DollarSign,
   Tag,
+  User,
 } from "lucide-react";
 
 interface CaseDetailProps {
@@ -28,150 +24,107 @@ interface CaseDetailProps {
   onUpdate: (updated: RefundCase) => void;
 }
 
-function getRiskHeader(score: number, category: string) {
+function getRiskIndicator(category: string) {
   if (category === "high_risk") {
-    return {
-      label: "HIGH RISK",
-      bg: "bg-red-600",
-      icon: <AlertTriangle className="w-4 h-4" />,
-    };
+    return { dot: "bg-rose-500", label: "High Risk", text: "text-rose-600 dark:text-rose-400" };
   }
   if (category === "medium_risk") {
-    return {
-      label: "MEDIUM RISK",
-      bg: "bg-orange-500",
-      icon: <Clock className="w-4 h-4" />,
-    };
+    return { dot: "bg-amber-500", label: "Medium Risk", text: "text-amber-600 dark:text-amber-400" };
   }
-  return {
-    label: "LOW RISK",
-    bg: "bg-green-600",
-    icon: <CheckCircle2 className="w-4 h-4" />,
-  };
+  return { dot: "bg-emerald-500", label: "Low Risk", text: "text-emerald-600 dark:text-emerald-400" };
 }
 
 function getReasonLabel(reason: string) {
   const map: Record<string, string> = {
     no_show: "No Show",
-    technical_issue: "Technical Issue",
+    technical_issue: "Tech Issue",
     cancellation: "Cancellation",
-    weather: "Weather-Related",
+    weather: "Weather",
     other: "Other",
   };
   return map[reason] || reason;
 }
 
-function formatDateTime(iso: string) {
-  const d = new Date(iso);
-  return d.toLocaleDateString("en-US", {
-    month: "long",
-    day: "numeric",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-}
-
 export function CaseDetail({ refundCase, onUpdate }: CaseDetailProps) {
+  const [sidebarOpen, setSidebarOpen] = useState(true);
   const { riskAssessment } = refundCase;
   const score = riskAssessment?.totalScore ?? 0;
   const category = riskAssessment?.category ?? "auto_approve";
-  const header = getRiskHeader(score, category);
-
+  const risk = getRiskIndicator(category);
   const isResolved = ["approved", "denied", "escalated", "auto_approved"].includes(refundCase.status);
 
   return (
     <div className="flex h-full bg-background">
+      {/* Center: main content */}
       <div className="flex flex-col flex-1 min-w-0 overflow-hidden">
-        {/* Risk Score Header */}
-        <div className={cn("flex items-center justify-between px-4 py-2.5 text-white shrink-0", header.bg)}>
+
+        {/* Slim status bar */}
+        <div className="flex items-center justify-between px-4 py-2 border-b border-border bg-card shrink-0">
           <div className="flex items-center gap-2.5">
-            {header.icon}
-            <div>
-              <div className="font-bold text-sm tracking-wide">
-                {header.label} — SCORE: {score}
-              </div>
-              <div className="text-xs opacity-90">{riskAssessment?.systemDecision}</div>
-            </div>
+            <span className={cn("w-2 h-2 rounded-full shrink-0", risk.dot)} />
+            <span className={cn("text-xs font-semibold", risk.text)}>{risk.label}</span>
+            <span className="text-xs text-muted-foreground">Score: {score}</span>
+            {riskAssessment?.systemDecision && (
+              <span className="text-xs text-muted-foreground hidden sm:inline">· {riskAssessment.systemDecision}</span>
+            )}
           </div>
           <div className="flex items-center gap-2">
-            <div className="text-right">
-              <div className="text-xs opacity-80">Case ID</div>
-              <div className="font-mono text-sm font-semibold">{refundCase.id}</div>
-            </div>
+            <span className="text-xs font-mono text-muted-foreground">{refundCase.id}</span>
             {isResolved && (
-              <Badge className="bg-white/20 text-white text-xs border-white/30">
-                {refundCase.status === "auto_approved" ? "Auto-Approved" : 
+              <Badge variant="secondary" className="text-xs h-5">
+                {refundCase.status === "auto_approved" ? "Auto-Approved" :
                  refundCase.status.charAt(0).toUpperCase() + refundCase.status.slice(1)}
               </Badge>
             )}
           </div>
         </div>
 
-        {/* Case Info Bar */}
-        <div className="flex items-center gap-4 px-4 py-2 border-b border-border bg-card/50 shrink-0 flex-wrap">
+        {/* Compact case info bar */}
+        <div className="flex items-center gap-3 px-4 py-1.5 border-b border-border bg-muted/20 shrink-0 flex-wrap">
           <div className="flex items-center gap-1.5">
-            <User className="w-3.5 h-3.5 text-muted-foreground" />
-            <span className="text-sm font-semibold text-foreground">{refundCase.customerName}</span>
-            <span className="text-xs text-muted-foreground">({refundCase.customerId})</span>
+            <User className="w-3 h-3 text-muted-foreground" />
+            <span className="text-xs font-semibold text-foreground">{refundCase.customerName}</span>
           </div>
-          <Separator orientation="vertical" className="h-4" />
-          <div className="flex items-center gap-1.5">
-            <Tag className="w-3.5 h-3.5 text-muted-foreground" />
-            <span className="text-xs text-muted-foreground">Booking:</span>
-            <span className="text-sm font-mono text-foreground">{refundCase.bookingId}</span>
+          <span className="text-muted-foreground/40 text-xs">·</span>
+          <div className="flex items-center gap-1">
+            <Tag className="w-3 h-3 text-muted-foreground" />
+            <span className="text-xs font-mono text-muted-foreground">{refundCase.bookingId}</span>
           </div>
-          <Separator orientation="vertical" className="h-4" />
-          <div className="flex items-center gap-1.5">
-            <DollarSign className="w-3.5 h-3.5 text-muted-foreground" />
-            <span className="text-sm font-semibold text-foreground">${refundCase.refundAmount.toLocaleString()}</span>
-            <span className="text-xs text-muted-foreground">refund requested</span>
+          <span className="text-muted-foreground/40 text-xs">·</span>
+          <div className="flex items-center gap-1">
+            <DollarSign className="w-3 h-3 text-muted-foreground" />
+            <span className="text-xs font-semibold text-foreground">${refundCase.refundAmount.toLocaleString()}</span>
           </div>
-          <Separator orientation="vertical" className="h-4" />
-          <div className="flex items-center gap-1.5">
-            <CalendarDays className="w-3.5 h-3.5 text-muted-foreground" />
-            <span className="text-xs text-muted-foreground">{formatDateTime(refundCase.requestDate)}</span>
-          </div>
-          <Separator orientation="vertical" className="h-4" />
-          <Badge variant="secondary" className="text-xs">{getReasonLabel(refundCase.refundReason)}</Badge>
+          <span className="text-muted-foreground/40 text-xs">·</span>
+          <Badge variant="outline" className="text-xs h-4 px-1.5 py-0">{getReasonLabel(refundCase.refundReason)}</Badge>
+          <span className="text-muted-foreground/40 text-xs hidden md:inline">·</span>
+          <span className="text-xs text-muted-foreground truncate hidden md:inline max-w-[200px]">{refundCase.experienceName}</span>
         </div>
 
-        {/* Experience Info */}
-        <div className="px-4 py-2.5 border-b border-border bg-muted/30 shrink-0">
-          <div className="flex items-center justify-between flex-wrap gap-2">
-            <div>
-              <div className="font-semibold text-sm text-foreground">{refundCase.experienceName}</div>
-              <div className="text-xs text-muted-foreground mt-0.5">
-                {refundCase.experienceCategory} · Experience date: {formatDateTime(refundCase.experienceDate)} · Value: ${refundCase.experienceValue.toLocaleString()} ({refundCase.experienceValuePercentile}th percentile)
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Main Content Tabs */}
+        {/* Main tabs */}
         <Tabs defaultValue="chat" className="flex flex-col flex-1 overflow-hidden">
           <div className="px-4 border-b border-border shrink-0 bg-background">
-            <TabsList className="h-9 bg-transparent gap-1 rounded-none p-0">
+            <TabsList className="h-8 bg-transparent gap-0.5 rounded-none p-0">
               <TabsTrigger
                 value="chat"
-                className="text-xs rounded-md data-[state=active]:bg-secondary data-[state=active]:text-secondary-foreground"
+                className="text-xs rounded-md data-[state=active]:bg-secondary data-[state=active]:text-secondary-foreground h-7"
                 data-testid="tab-chat"
               >
                 Ticket & Chat
               </TabsTrigger>
               <TabsTrigger
                 value="reasoning"
-                className="text-xs rounded-md data-[state=active]:bg-secondary data-[state=active]:text-secondary-foreground"
+                className="text-xs rounded-md data-[state=active]:bg-secondary data-[state=active]:text-secondary-foreground h-7"
                 data-testid="tab-reasoning"
               >
-                Reasoning & Evidence
+                Reasoning
               </TabsTrigger>
               <TabsTrigger
                 value="audit"
-                className="text-xs rounded-md data-[state=active]:bg-secondary data-[state=active]:text-secondary-foreground"
+                className="text-xs rounded-md data-[state=active]:bg-secondary data-[state=active]:text-secondary-foreground h-7"
                 data-testid="tab-audit"
               >
-                Audit Trail
+                Audit
               </TabsTrigger>
             </TabsList>
           </div>
@@ -197,28 +150,56 @@ export function CaseDetail({ refundCase, onUpdate }: CaseDetailProps) {
           </TabsContent>
         </Tabs>
 
-        {/* Action Hub */}
+        {/* Action hub */}
         {!isResolved && (
-          <div className="shrink-0 border-t border-border bg-card/50 p-4">
+          <div className="shrink-0 border-t border-border bg-card/50 p-3">
             <ActionHub refundCase={refundCase} onUpdate={onUpdate} />
           </div>
         )}
         {isResolved && refundCase.status !== "auto_approved" && (
-          <div className="shrink-0 border-t border-border bg-muted/30 px-4 py-3">
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <CheckCircle2 className="w-4 h-4" />
-              <span>Case resolved — {refundCase.status}. {refundCase.agentNotes ? `Notes: ${refundCase.agentNotes}` : ""}</span>
+          <div className="shrink-0 border-t border-border bg-muted/20 px-4 py-2">
+            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+              <CheckCircle2 className="w-3.5 h-3.5" />
+              <span>Case resolved — {refundCase.status}{refundCase.agentNotes ? `. ${refundCase.agentNotes}` : ""}</span>
             </div>
           </div>
         )}
       </div>
 
-      {/* Right Panel: Customer 360 */}
-      <div className="w-72 shrink-0 border-l border-border overflow-hidden flex flex-col">
-        <ScrollArea className="flex-1">
-          <Customer360 refundCase={refundCase} />
-        </ScrollArea>
-      </div>
+      {/* Collapsible Customer 360 sidebar */}
+      {sidebarOpen ? (
+        <div className="w-60 shrink-0 border-l border-border overflow-hidden flex flex-col">
+          <div className="flex items-center justify-between px-3 py-2 border-b border-border shrink-0">
+            <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Customer 360</span>
+            <Button
+              size="icon"
+              variant="ghost"
+              className="w-5 h-5"
+              onClick={() => setSidebarOpen(false)}
+              data-testid="button-close-sidebar"
+              title="Hide sidebar"
+            >
+              <ChevronRight className="w-3.5 h-3.5" />
+            </Button>
+          </div>
+          <ScrollArea className="flex-1">
+            <Customer360 refundCase={refundCase} />
+          </ScrollArea>
+        </div>
+      ) : (
+        <div className="w-8 shrink-0 border-l border-border flex flex-col items-center py-3">
+          <Button
+            size="icon"
+            variant="ghost"
+            className="w-6 h-6"
+            onClick={() => setSidebarOpen(true)}
+            data-testid="button-open-sidebar"
+            title="Show customer details"
+          >
+            <ChevronLeft className="w-3.5 h-3.5" />
+          </Button>
+        </div>
+      )}
     </div>
   );
 }

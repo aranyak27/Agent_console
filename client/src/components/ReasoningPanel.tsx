@@ -1,26 +1,34 @@
 import { useState } from "react";
-import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import type { RefundCase, TriggeredRule } from "@shared/schema";
+import type { RefundCase } from "@shared/schema";
 import { cn } from "@/lib/utils";
-import { AlertTriangle, TrendingDown, CheckCircle2, ExternalLink, Mail, Monitor, History, Info } from "lucide-react";
+import { CheckCircle2, ExternalLink, Mail, Monitor, History, Info } from "lucide-react";
 
 interface ReasoningPanelProps {
   refundCase: RefundCase;
 }
 
-const RULE_COLORS: Record<string, { bg: string; border: string; badge: string; icon: React.ReactNode }> = {
-  R1: { bg: "bg-red-50 dark:bg-red-950/50", border: "border-red-200 dark:border-red-800", badge: "bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-300", icon: <AlertTriangle className="w-4 h-4 text-red-600 dark:text-red-400" /> },
-  R2: { bg: "bg-red-50 dark:bg-red-950/50", border: "border-red-200 dark:border-red-800", badge: "bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-300", icon: <AlertTriangle className="w-4 h-4 text-red-600 dark:text-red-400" /> },
-  R3: { bg: "bg-red-50 dark:bg-red-950/50", border: "border-red-200 dark:border-red-800", badge: "bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-300", icon: <AlertTriangle className="w-4 h-4 text-red-600 dark:text-red-400" /> },
-  R4: { bg: "bg-orange-50 dark:bg-orange-950/50", border: "border-orange-200 dark:border-orange-800", badge: "bg-orange-100 dark:bg-orange-900 text-orange-700 dark:text-orange-300", icon: <AlertTriangle className="w-4 h-4 text-orange-600 dark:text-orange-400" /> },
-  R5: { bg: "bg-orange-50 dark:bg-orange-950/50", border: "border-orange-200 dark:border-orange-800", badge: "bg-orange-100 dark:bg-orange-900 text-orange-700 dark:text-orange-300", icon: <AlertTriangle className="w-4 h-4 text-orange-600 dark:text-orange-400" /> },
-  R6: { bg: "bg-orange-50 dark:bg-orange-950/50", border: "border-orange-200 dark:border-orange-800", badge: "bg-orange-100 dark:bg-orange-900 text-orange-700 dark:text-orange-300", icon: <AlertTriangle className="w-4 h-4 text-orange-600 dark:text-orange-400" /> },
-  R7: { bg: "bg-orange-50 dark:bg-orange-950/50", border: "border-orange-200 dark:border-orange-800", badge: "bg-orange-100 dark:bg-orange-900 text-orange-700 dark:text-orange-300", icon: <AlertTriangle className="w-4 h-4 text-orange-600 dark:text-orange-400" /> },
-  R8: { bg: "bg-green-50 dark:bg-green-950/50", border: "border-green-200 dark:border-green-800", badge: "bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300", icon: <CheckCircle2 className="w-4 h-4 text-green-600 dark:text-green-400" /> },
-};
+function getScoreColor(pts: number) {
+  if (pts > 0) return "text-rose-600 dark:text-rose-400";
+  return "text-emerald-600 dark:text-emerald-400";
+}
+
+function getRuleAccent(ruleId: string) {
+  const high = ["R1", "R2", "R3"];
+  const medium = ["R4", "R5", "R6", "R7"];
+  if (high.includes(ruleId)) return "border-l-rose-400 dark:border-l-rose-600";
+  if (medium.includes(ruleId)) return "border-l-amber-400 dark:border-l-amber-600";
+  return "border-l-emerald-400 dark:border-l-emerald-600";
+}
+
+function getRuleBadge(ruleId: string) {
+  const high = ["R1", "R2", "R3"];
+  const medium = ["R4", "R5", "R6", "R7"];
+  if (high.includes(ruleId)) return "bg-rose-100 dark:bg-rose-950 text-rose-700 dark:text-rose-300";
+  if (medium.includes(ruleId)) return "bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-300";
+  return "bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300";
+}
 
 interface LogModalState {
   open: boolean;
@@ -35,138 +43,97 @@ export function ReasoningPanel({ refundCase }: ReasoningPanelProps) {
 
   const { triggeredRules, totalScore, category, hasIncompleteData } = riskAssessment;
 
+  const totalColor =
+    totalScore >= 70 ? "text-rose-600 dark:text-rose-400" :
+    totalScore >= 30 ? "text-amber-600 dark:text-amber-400" :
+    "text-emerald-600 dark:text-emerald-400";
+
   return (
-    <div className="space-y-4">
-      {/* Score Breakdown */}
-      <div>
-        <div className="flex items-center justify-between mb-3 gap-2">
-          <h3 className="font-semibold text-sm text-foreground">Risk Evidence & Reasoning</h3>
-          <div className="flex items-center gap-2">
-            <span className="text-xs text-muted-foreground">{triggeredRules.length} rule{triggeredRules.length !== 1 ? "s" : ""} triggered</span>
-          </div>
-        </div>
-
-        {hasIncompleteData && (
-          <div className="mb-3 flex items-start gap-2.5 p-3 rounded-md bg-yellow-50 dark:bg-yellow-950/50 border border-yellow-200 dark:border-yellow-800">
-            <Info className="w-4 h-4 text-yellow-600 dark:text-yellow-400 shrink-0 mt-0.5" />
-            <div className="text-xs text-yellow-800 dark:text-yellow-200">
-              <span className="font-semibold">Incomplete Data Warning:</span> Email engagement data is unavailable. Request defaulted to Moderate Risk per safety policy to prevent unfair auto-rejection.
-            </div>
-          </div>
-        )}
-
-        {triggeredRules.length === 0 ? (
-          <div className="flex items-center gap-2.5 p-3 rounded-md bg-green-50 dark:bg-green-950/50 border border-green-200 dark:border-green-800">
-            <CheckCircle2 className="w-4 h-4 text-green-600 dark:text-green-400 shrink-0" />
-            <div className="text-sm text-green-800 dark:text-green-200">
-              No risk rules triggered. This request qualifies for auto-approval.
-            </div>
-          </div>
-        ) : (
-          <div className="space-y-2.5">
-            {triggeredRules.map((rule, idx) => {
-              const style = RULE_COLORS[rule.ruleId] || RULE_COLORS.R4;
-              const isDiscount = rule.scoreAdded < 0;
-              return (
-                <div
-                  key={rule.ruleId}
-                  className={cn("rounded-md border p-3.5", style.bg, style.border)}
-                  data-testid={`rule-card-${rule.ruleId}`}
-                >
-                  <div className="flex items-start justify-between gap-2 mb-2">
-                    <div className="flex items-center gap-2">
-                      {style.icon}
-                      <div>
-                        <div className="flex items-center gap-1.5 flex-wrap">
-                          <span className={cn("text-xs font-bold px-1.5 py-0.5 rounded", style.badge)}>
-                            {rule.ruleId}
-                          </span>
-                          <span className="text-sm font-semibold text-foreground">{rule.ruleName}</span>
-                        </div>
-                      </div>
-                    </div>
-                    <div className={cn(
-                      "shrink-0 text-sm font-bold px-2 py-1 rounded",
-                      isDiscount
-                        ? "text-green-700 dark:text-green-300 bg-green-100 dark:bg-green-900"
-                        : "text-red-700 dark:text-red-300 bg-red-100 dark:bg-red-900"
-                    )}>
-                      {isDiscount ? "" : "+"}{rule.scoreAdded} pts
-                    </div>
-                  </div>
-                  <p className="text-xs text-muted-foreground leading-relaxed">{rule.detail}</p>
-
-                  {rule.ruleId === "R3" && refundCase.emailEngagementLog && refundCase.emailEngagementLog.length > 0 && (
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="mt-2 h-7 text-xs"
-                      onClick={() => setLogModal({ open: true, type: "email" })}
-                      data-testid="button-view-email-log"
-                    >
-                      <Mail className="w-3 h-3 mr-1.5" />
-                      View Email Engagement Log
-                      <ExternalLink className="w-3 h-3 ml-1.5" />
-                    </Button>
-                  )}
-                  {rule.ruleId === "R7" && refundCase.emailEngagementLog && refundCase.emailEngagementLog.length > 0 && (
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="mt-2 h-7 text-xs"
-                      onClick={() => setLogModal({ open: true, type: "email" })}
-                      data-testid="button-view-system-log"
-                    >
-                      <Monitor className="w-3 h-3 mr-1.5" />
-                      View System Access Log
-                      <ExternalLink className="w-3 h-3 ml-1.5" />
-                    </Button>
-                  )}
-                  {(rule.ruleId === "R1" || rule.ruleId === "R2" || rule.ruleId === "R6") && refundCase.refundHistory && (
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="mt-2 h-7 text-xs"
-                      onClick={() => setLogModal({ open: true, type: "refund" })}
-                      data-testid="button-view-refund-history"
-                    >
-                      <History className="w-3 h-3 mr-1.5" />
-                      View 6-Month Refund History
-                      <ExternalLink className="w-3 h-3 ml-1.5" />
-                    </Button>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        )}
+    <div className="space-y-3">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <h3 className="text-sm font-semibold text-foreground">Risk Reasoning</h3>
+        <span className="text-xs text-muted-foreground">
+          {triggeredRules.length} rule{triggeredRules.length !== 1 ? "s" : ""} triggered
+        </span>
       </div>
 
-      {/* Score Summary */}
-      <div className="rounded-md border border-border bg-card p-3">
-        <div className="flex items-center justify-between mb-2">
-          <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Score Breakdown</span>
+      {hasIncompleteData && (
+        <div className="flex items-start gap-2 p-2.5 rounded-md bg-muted/50 border border-border text-xs">
+          <Info className="w-3.5 h-3.5 text-amber-500 shrink-0 mt-0.5" />
+          <span className="text-muted-foreground">
+            <span className="font-medium text-foreground">Incomplete data:</span> Email engagement unavailable — defaulted to Moderate Risk per safety policy.
+          </span>
         </div>
-        <div className="space-y-1.5">
+      )}
+
+      {triggeredRules.length === 0 ? (
+        <div className="flex items-center gap-2 p-3 rounded-md bg-muted/30 border border-border text-sm text-muted-foreground">
+          <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
+          No risk rules triggered — qualifies for auto-approval.
+        </div>
+      ) : (
+        <div className="space-y-2">
+          {triggeredRules.map((rule) => {
+            const isDiscount = rule.scoreAdded < 0;
+            return (
+              <div
+                key={rule.ruleId}
+                className={cn(
+                  "rounded-md border border-border bg-card border-l-2 p-3",
+                  getRuleAccent(rule.ruleId)
+                )}
+                data-testid={`rule-card-${rule.ruleId}`}
+              >
+                <div className="flex items-start justify-between gap-2 mb-1.5">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className={cn("text-xs font-bold px-1.5 py-0.5 rounded", getRuleBadge(rule.ruleId))}>
+                      {rule.ruleId}
+                    </span>
+                    <span className="text-xs font-semibold text-foreground">{rule.ruleName}</span>
+                  </div>
+                  <span className={cn("shrink-0 text-xs font-bold tabular-nums", getScoreColor(rule.scoreAdded))}>
+                    {isDiscount ? "" : "+"}{rule.scoreAdded} pts
+                  </span>
+                </div>
+                <p className="text-xs text-muted-foreground leading-relaxed">{rule.detail}</p>
+
+                {rule.ruleId === "R3" && refundCase.emailEngagementLog && refundCase.emailEngagementLog.length > 0 && (
+                  <Button variant="ghost" size="sm" className="mt-2 h-6 text-xs px-2" onClick={() => setLogModal({ open: true, type: "email" })} data-testid="button-view-email-log">
+                    <Mail className="w-3 h-3 mr-1" /> Email log <ExternalLink className="w-2.5 h-2.5 ml-1" />
+                  </Button>
+                )}
+                {rule.ruleId === "R7" && refundCase.emailEngagementLog && refundCase.emailEngagementLog.length > 0 && (
+                  <Button variant="ghost" size="sm" className="mt-2 h-6 text-xs px-2" onClick={() => setLogModal({ open: true, type: "email" })} data-testid="button-view-system-log">
+                    <Monitor className="w-3 h-3 mr-1" /> System log <ExternalLink className="w-2.5 h-2.5 ml-1" />
+                  </Button>
+                )}
+                {(rule.ruleId === "R1" || rule.ruleId === "R2" || rule.ruleId === "R6") && refundCase.refundHistory && (
+                  <Button variant="ghost" size="sm" className="mt-2 h-6 text-xs px-2" onClick={() => setLogModal({ open: true, type: "refund" })} data-testid="button-view-refund-history">
+                    <History className="w-3 h-3 mr-1" /> Refund history <ExternalLink className="w-2.5 h-2.5 ml-1" />
+                  </Button>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      {/* Score summary */}
+      <div className="rounded-md border border-border bg-muted/20 p-3">
+        <div className="space-y-1">
           {triggeredRules.map((rule) => (
             <div key={rule.ruleId} className="flex items-center justify-between text-xs">
               <span className="text-muted-foreground">{rule.ruleId}: {rule.ruleName}</span>
-              <span className={cn("font-semibold", rule.scoreAdded < 0 ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400")}>
+              <span className={cn("font-semibold tabular-nums", getScoreColor(rule.scoreAdded))}>
                 {rule.scoreAdded > 0 ? "+" : ""}{rule.scoreAdded}
               </span>
             </div>
           ))}
           {triggeredRules.length > 0 && <div className="border-t border-border my-1.5" />}
           <div className="flex items-center justify-between text-xs font-bold">
-            <span className="text-foreground">Total Risk Score</span>
-            <span className={cn(
-              "text-base",
-              totalScore >= 70 ? "text-red-600 dark:text-red-400" :
-              totalScore >= 30 ? "text-orange-600 dark:text-orange-400" :
-              "text-green-600 dark:text-green-400"
-            )}>
-              {totalScore} / 100
-            </span>
+            <span className="text-foreground">Total Score</span>
+            <span className={cn("text-sm tabular-nums", totalColor)}>{totalScore}</span>
           </div>
         </div>
       </div>
@@ -176,34 +143,30 @@ export function ReasoningPanel({ refundCase }: ReasoningPanelProps) {
         <DialogContent className="max-w-lg" data-testid="modal-log-viewer">
           <DialogHeader>
             <DialogTitle className="text-sm">
-              {logModal.type === "email" ? "Email Engagement & System Access Log" : "6-Month Refund History"}
+              {logModal.type === "email" ? "Email & System Access Log" : "6-Month Refund History"}
             </DialogTitle>
           </DialogHeader>
           {logModal.type === "email" && refundCase.emailEngagementLog && (
             <div className="space-y-2">
-              <div className="text-xs text-muted-foreground mb-3">
-                Case: {refundCase.id} · Customer: {refundCase.customerName} · Booking: {refundCase.bookingId}
-              </div>
-              <div className="font-mono text-xs bg-muted rounded-md p-3 space-y-2 border border-border">
+              <div className="text-xs text-muted-foreground">{refundCase.id} · {refundCase.customerName} · {refundCase.bookingId}</div>
+              <div className="font-mono text-xs bg-muted rounded-md p-3 space-y-1.5 border border-border">
                 {refundCase.emailEngagementLog.map((entry, i) => (
                   <div key={i} className="flex gap-3">
                     <span className="text-muted-foreground shrink-0">{new Date(entry.timestamp).toLocaleTimeString()}</span>
-                    <span className="text-orange-600 dark:text-orange-400 shrink-0">[{entry.event}]</span>
+                    <span className="text-amber-600 dark:text-amber-400 shrink-0">[{entry.event}]</span>
                     <span className="text-foreground">{entry.device} · {entry.location}</span>
                   </div>
                 ))}
               </div>
-              <div className="text-xs text-muted-foreground mt-2 p-2 bg-yellow-50 dark:bg-yellow-950/50 rounded border border-yellow-200 dark:border-yellow-800">
-                System log timestamps confirm active engagement within {Math.abs(refundCase.refundTimingHours)} hours of the experience.
+              <div className="text-xs text-muted-foreground p-2 bg-muted/50 rounded border border-border">
+                Log confirms active engagement within {Math.abs(refundCase.refundTimingHours)}h of the experience.
               </div>
             </div>
           )}
           {logModal.type === "refund" && refundCase.refundHistory && (
             <div className="space-y-2">
-              <div className="text-xs text-muted-foreground mb-3">
-                Showing refund history for {refundCase.customerName} ({refundCase.customerId})
-              </div>
-              <div className="space-y-1.5">
+              <div className="text-xs text-muted-foreground">Refund history for {refundCase.customerName}</div>
+              <div className="space-y-1">
                 {refundCase.refundHistory.map((entry, i) => (
                   <div key={i} className="flex items-center justify-between text-xs p-2 rounded border border-border bg-card">
                     <div>
@@ -211,16 +174,16 @@ export function ReasoningPanel({ refundCase }: ReasoningPanelProps) {
                       <div className="text-muted-foreground">{entry.date} · {entry.reason}</div>
                     </div>
                     <div className="text-right">
-                      <div className="font-semibold text-foreground">${entry.amount}</div>
-                      <Badge variant={entry.outcome === "Approved" ? "secondary" : "destructive"} className="text-xs mt-0.5">
+                      <div className="font-semibold">${entry.amount}</div>
+                      <div className={cn("text-xs", entry.outcome === "Approved" ? "text-emerald-600 dark:text-emerald-400" : "text-muted-foreground")}>
                         {entry.outcome}
-                      </Badge>
+                      </div>
                     </div>
                   </div>
                 ))}
               </div>
-              <div className="text-xs text-muted-foreground p-2 bg-red-50 dark:bg-red-950/50 rounded border border-red-200 dark:border-red-800">
-                Total: {refundCase.refundCountLast6Months} refunds in last 6 months · {refundCase.totalRefundCount} lifetime total
+              <div className="text-xs text-muted-foreground p-2 bg-muted/50 rounded border border-border">
+                {refundCase.refundCountLast6Months} refunds in last 6 months · {refundCase.totalRefundCount} lifetime total
               </div>
             </div>
           )}

@@ -1,21 +1,10 @@
 import { useState, useMemo } from "react";
 import { useLocation } from "wouter";
 import { MOCK_CASES } from "@/lib/mockData";
-import type { RefundCase, CaseStatus } from "@shared/schema";
+import type { RefundCase } from "@shared/schema";
 import { CaseQueue } from "@/components/CaseQueue";
 import { CaseDetail } from "@/components/CaseDetail";
 import { AppHeader } from "@/components/AppHeader";
-import { Badge } from "@/components/ui/badge";
-
-const STATUS_FILTER_OPTIONS: { label: string; value: string }[] = [
-  { label: "All Cases", value: "all" },
-  { label: "High Risk", value: "high_risk" },
-  { label: "Medium Risk", value: "medium_risk" },
-  { label: "Auto-Approved", value: "auto_approved" },
-  { label: "Approved", value: "approved" },
-  { label: "Denied", value: "denied" },
-  { label: "Escalated", value: "escalated" },
-];
 
 export default function AgentWorkspace() {
   const [, navigate] = useLocation();
@@ -23,6 +12,7 @@ export default function AgentWorkspace() {
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [cases, setCases] = useState<RefundCase[]>(MOCK_CASES);
+  const [queueCollapsed, setQueueCollapsed] = useState(false);
 
   const filteredCases = useMemo(() => {
     return cases.filter((c) => {
@@ -66,8 +56,10 @@ export default function AgentWorkspace() {
           onStatusFilter={setStatusFilter}
           searchQuery={searchQuery}
           onSearch={setSearchQuery}
-          filterOptions={STATUS_FILTER_OPTIONS}
+          filterOptions={[]}
           totalCount={cases.length}
+          collapsed={queueCollapsed}
+          onToggleCollapse={() => setQueueCollapsed((v) => !v)}
         />
         <div className="flex-1 overflow-hidden">
           {selectedCase ? (
@@ -78,13 +70,10 @@ export default function AgentWorkspace() {
           ) : (
             <div className="flex items-center justify-center h-full">
               <div className="text-center text-muted-foreground">
-                <div className="text-4xl mb-3 opacity-30">
-                  <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="mx-auto">
-                    <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                  </svg>
-                </div>
-                <p className="font-medium">Select a case to review</p>
-                <p className="text-sm mt-1">Choose from the queue on the left</p>
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="mx-auto mb-3 opacity-20">
+                  <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                <p className="text-sm font-medium">Select a case to review</p>
               </div>
             </div>
           )}
