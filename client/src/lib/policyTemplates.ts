@@ -8,7 +8,7 @@ export const policyTemplates: PolicyTemplate[] = [
     subject: "Your Refund Request — Case #{{caseId}} — Decision",
     body: `Dear {{customerName}},
 
-Thank you for reaching out to Headout Support regarding your recent booking ({{bookingId}}).
+Thank you for reaching out to ExperienceCo Support regarding your recent booking ({{bookingId}}).
 
 After a thorough review of your account and refund history, we regret to inform you that we are unable to approve this refund request at this time.
 
@@ -19,7 +19,7 @@ If you believe this decision is in error, or if you have documentation that supp
 We value your patronage and hope to continue providing you with great experiences.
 
 Warm regards,
-Headout Customer Support Team`,
+ExperienceCo Customer Support Team`,
   },
   {
     id: "T2",
@@ -28,7 +28,7 @@ Headout Customer Support Team`,
     subject: "Your Refund Request — Case #{{caseId}} — Decision",
     body: `Dear {{customerName}},
 
-Thank you for contacting Headout Support regarding your booking ({{bookingId}}).
+Thank you for contacting ExperienceCo Support regarding your booking ({{bookingId}}).
 
 We have carefully reviewed your refund request for "{{experienceName}}" citing a no-show.
 
@@ -39,7 +39,7 @@ Based on this evidence, we are unable to approve the requested refund under the 
 If you have additional context or documentation that explains this discrepancy, please don't hesitate to share it with us and we'll be happy to take another look.
 
 Kind regards,
-Headout Customer Support Team`,
+ExperienceCo Customer Support Team`,
   },
   {
     id: "T3",
@@ -48,7 +48,7 @@ Headout Customer Support Team`,
     subject: "Your Refund Request — Case #{{caseId}} — Technical Issue Claim",
     body: `Dear {{customerName}},
 
-Thank you for reaching out to Headout Support about your booking ({{bookingId}}).
+Thank you for reaching out to ExperienceCo Support about your booking ({{bookingId}}).
 
 We have reviewed your refund request citing a technical issue that prevented you from accessing or using the experience.
 
@@ -59,7 +59,7 @@ As a result, we are unable to approve a refund on the basis of a technical issue
 We take technical complaints seriously and continuously work to improve our platform. If you experienced a specific technical issue, please describe it in detail so our engineering team can investigate and prevent future occurrences.
 
 Best regards,
-Headout Customer Support Team`,
+ExperienceCo Customer Support Team`,
   },
   {
     id: "T4",
@@ -68,7 +68,7 @@ Headout Customer Support Team`,
     subject: "Your Refund Request — Case #{{caseId}} — Outside Cancellation Window",
     body: `Dear {{customerName}},
 
-Thank you for contacting Headout Support regarding your booking ({{bookingId}}).
+Thank you for contacting ExperienceCo Support regarding your booking ({{bookingId}}).
 
 We have reviewed your refund request for "{{experienceName}}."
 
@@ -79,7 +79,7 @@ Your cancellation request was received approximately {{refundTiming}} before the
 We understand this may be disappointing. As a one-time courtesy, we may be able to offer an experience credit. Please reply to this email to discuss this option with our team.
 
 With apologies for any inconvenience,
-Headout Customer Support Team`,
+ExperienceCo Customer Support Team`,
   },
   {
     id: "T5",
@@ -88,7 +88,7 @@ Headout Customer Support Team`,
     subject: "Your Refund Request — Case #{{caseId}} — Account Review",
     body: `Dear {{customerName}},
 
-Thank you for contacting Headout Support.
+Thank you for contacting ExperienceCo Support.
 
 We have received your refund request for booking ({{bookingId}}).
 
@@ -99,7 +99,7 @@ If you are a genuine customer and believe this decision is incorrect, we warmly 
 We apologize for any inconvenience and appreciate your understanding.
 
 Sincerely,
-Headout Customer Support Team`,
+ExperienceCo Customer Support Team`,
   },
 ];
 
@@ -123,10 +123,10 @@ Refund amount: {{refundAmount}}
 Expected processing time: 5–7 business days
 Refund method: Original payment method
 
-We apologize for any inconvenience and hope to welcome you back to Headout soon.
+We apologize for any inconvenience and hope to welcome you back to ExperienceCo soon.
 
 Warm regards,
-Headout Customer Support Team`,
+ExperienceCo Customer Support Team`,
   },
   {
     id: "A2",
@@ -143,7 +143,7 @@ Your refund will be processed within 5–7 business days to your original paymen
 We truly value your continued support and look forward to welcoming you back soon.
 
 Kind regards,
-Headout Customer Support Team`,
+ExperienceCo Customer Support Team`,
   },
   {
     id: "A3",
@@ -151,7 +151,7 @@ Headout Customer Support Team`,
     subject: "Your Refund Request — Case #{{caseId}} — Approved",
     body: `Dear {{customerName}},
 
-As a valued long-standing member of the Headout community, we are happy to approve your refund request for booking {{bookingId}}.
+As a valued long-standing member of the ExperienceCo community, we are happy to approve your refund request for booking {{bookingId}}.
 
 Refund amount: {{refundAmount}}
 Processing time: 5–7 business days
@@ -159,7 +159,7 @@ Processing time: 5–7 business days
 Your loyalty means a great deal to us. We look forward to welcoming you back for more great experiences.
 
 With gratitude,
-Headout Customer Support Team`,
+ExperienceCo Customer Support Team`,
   },
   {
     id: "A4",
@@ -167,16 +167,16 @@ Headout Customer Support Team`,
     subject: "Your Refund Request — Case #{{caseId}} — Credit Offered",
     body: `Dear {{customerName}},
 
-Thank you for contacting Headout Support regarding booking {{bookingId}}.
+Thank you for contacting ExperienceCo Support regarding booking {{bookingId}}.
 
-While a direct cash refund is not available under our standard policy, we would like to offer you an Headout Experience Credit of {{refundAmount}} valid for 12 months — giving you the flexibility to rebook any experience at your convenience.
+While a direct cash refund is not available under our standard policy, we would like to offer you an ExperienceCo Experience Credit of {{refundAmount}} valid for 12 months — giving you the flexibility to rebook any experience at your convenience.
 
 To accept this offer, please reply to this email and we'll apply the credit to your account within 24 hours.
 
 We hope to have the opportunity to make your next experience exceptional.
 
 Best regards,
-Headout Customer Support Team`,
+ExperienceCo Customer Support Team`,
   },
 ];
 

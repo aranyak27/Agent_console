@@ -71,7 +71,7 @@ export async function registerRoutes(
         ? "MEDIUM RISK: Some suspicious patterns detected. The reply should acknowledge the request while indicating review is in progress."
         : "LOW RISK: Appears legitimate. The reply should be warm and indicate the refund is being processed.";
 
-      const systemPrompt = `You are a professional Customer Support agent at Headout, a travel experiences platform. 
+      const systemPrompt = `You are a professional Customer Support agent at ExperienceCo, a travel experiences platform. 
 Draft a polished, empathetic email reply to a customer's refund request.
 
 Guidelines:
@@ -81,7 +81,7 @@ Guidelines:
 - Reference the booking ID naturally
 - Maintain a warm but professional tone
 - Do not include subject line — just the email body
-- Start with "Dear [Name]," and end with "Kind regards,\nHeadout Customer Support Team"`;
+- Start with "Dear [Name]," and end with "Kind regards,\nExperienceCo Customer Support Team"`;
 
       const userPrompt = `Customer: ${data.customerName}
 Booking ID: ${data.bookingId}

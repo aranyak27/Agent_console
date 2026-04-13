@@ -1,7 +1,7 @@
 # RADS — Refund Abuse Detection System
 
 ## Overview
-An enterprise-grade Agent Console for detecting and managing refund abuse at Headout. Built as a functional prototype with a deterministic rules-based risk scoring engine (8 rules), dual-pane agent workspace, reasoning panel, policy template engine, audit trail, and performance dashboard.
+An enterprise-grade Agent Console for detecting and managing refund abuse at ExperienceCo. Built as a functional prototype with a deterministic rules-based risk scoring engine (8 rules), dual-pane agent workspace, reasoning panel, policy template engine, audit trail, and performance dashboard.
 
 ## Architecture
 - **Frontend**: React + TypeScript + Vite + TanStack Query + Recharts

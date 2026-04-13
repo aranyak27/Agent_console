@@ -114,7 +114,7 @@ function techExcuse(seed: number, c: RefundCase): string {
   const issues = [
     `When I arrived at the venue, the app showed "Booking not found" even though I had a valid confirmation email. The staff could not verify my booking and I was turned away.`,
     `The QR code in my confirmation email refused to load. I tried multiple times, restarted the app, and switched to mobile data — nothing worked. The venue had no manual process available.`,
-    `The Headout app kept crashing every time I attempted to open my ticket at the venue entrance. After 20 minutes of troubleshooting the session had started and I had missed the beginning.`,
+    `The ExperienceCo app kept crashing every time I attempted to open my ticket at the venue entrance. After 20 minutes of troubleshooting the session had started and I had missed the beginning.`,
     `I received a "Ticket Invalid" error at the gate — the scanner rejected my code three times. A staff member checked and said my booking appeared "unconfirmed" on their system.`,
     `My ticket simply didn't load on the day of the event. Every time I navigated to "My Bookings" I saw a blank screen. There was no way for me to prove my booking at the venue.`,
     `The confirmation link in my email led to a 404 page on the day of the experience. Without access to my digital ticket the venue could not admit me.`,
@@ -161,10 +161,10 @@ function buildMessages(c: RefundCase): TicketMessage[] {
     idx++;
     msgs.push({
       id: `msg-${c.id}-${idx}`,
-      from: role === "customer" ? c.customerName : role === "agent" ? "Headout Support" : "System",
-      fromEmail: role === "customer" ? c.customerEmail : role === "system" ? "system@headout.com" : "support@headout.com",
+      from: role === "customer" ? c.customerName : role === "agent" ? "ExperienceCo Support" : "System",
+      fromEmail: role === "customer" ? c.customerEmail : role === "system" ? "system@experienceco.com" : "support@experienceco.com",
       fromRole: role,
-      to: role === "customer" ? "support@headout.com" : c.customerEmail,
+      to: role === "customer" ? "support@experienceco.com" : c.customerEmail,
       subject: role === "customer" ? subject : `Re: ${subject}`,
       body,
       timestamp: addMins(c.requestDate, offsetMins),
@@ -173,7 +173,7 @@ function buildMessages(c: RefundCase): TicketMessage[] {
   }
 
   const firstName = c.customerName.split(" ")[0];
-  const greetings = ["Hi,", "Hello,", "Dear Support Team,", "Dear Headout Team,", "Hi Support,", "Hello there,"];
+  const greetings = ["Hi,", "Hello,", "Dear Support Team,", "Dear ExperienceCo Team,", "Hi Support,", "Hello there,"];
   const g = pick(greetings, seed + 2);
 
   /* ── AUTO-APPROVED: automated system flow ── */
@@ -198,7 +198,7 @@ function buildMessages(c: RefundCase): TicketMessage[] {
     );
 
     addMsg("agent",
-      `Hi ${firstName},\n\nThank you for submitting your refund request.\n\nGood news — our automated review system has assessed your case and approved your refund immediately.\n\n• Refund amount: ${fmt(c.refundAmount)}\n• Reference: ${refId(c.id)}\n• Processing time: 3–5 business days\n• Refund method: Original payment method\n\nNo further action is required from your end. You'll receive a separate confirmation email once the refund is processed.\n\nWe hope to welcome you back for another great experience soon.\n\nKind regards,\nHeadout Automated Support`,
+      `Hi ${firstName},\n\nThank you for submitting your refund request.\n\nGood news — our automated review system has assessed your case and approved your refund immediately.\n\n• Refund amount: ${fmt(c.refundAmount)}\n• Reference: ${refId(c.id)}\n• Processing time: 3–5 business days\n• Refund method: Original payment method\n\nNo further action is required from your end. You'll receive a separate confirmation email once the refund is processed.\n\nWe hope to welcome you back for another great experience soon.\n\nKind regards,\nExperienceCo Automated Support`,
       3
     );
 
@@ -214,9 +214,9 @@ function buildMessages(c: RefundCase): TicketMessage[] {
   if (c.refundReason === "no_show") {
     const excuse = noShowExcuse(seed, c);
     const tenureNote = c.customerTenureMonths >= 24
-      ? `\n\nFor context, I've been a Headout customer for over ${Math.floor(c.customerTenureMonths / 12)} years and this kind of situation is very unlike me.`
+      ? `\n\nFor context, I've been a ExperienceCo customer for over ${Math.floor(c.customerTenureMonths / 12)} years and this kind of situation is very unlike me.`
       : c.customerTenureMonths >= 12
-      ? `\n\nI've been using Headout for over a year and this is out of character for me.`
+      ? `\n\nI've been using ExperienceCo for over a year and this is out of character for me.`
       : "";
 
     addMsg("customer",
@@ -227,14 +227,14 @@ function buildMessages(c: RefundCase): TicketMessage[] {
     const isHighValue = c.refundAmount >= 500;
     if (isHighValue) {
       addMsg("agent",
-        `Dear ${c.customerName},\n\nThank you for reaching out. We've received your refund request for booking ${c.bookingId} (${c.experienceName} — ${fmt(c.refundAmount)}).\n\nGiven the value of this booking, your case is being reviewed by our senior support team under our high-value experience policy. You can expect a response within 2 hours.\n\nKind regards,\nHeadout VIP Support Team`,
+        `Dear ${c.customerName},\n\nThank you for reaching out. We've received your refund request for booking ${c.bookingId} (${c.experienceName} — ${fmt(c.refundAmount)}).\n\nGiven the value of this booking, your case is being reviewed by our senior support team under our high-value experience policy. You can expect a response within 2 hours.\n\nKind regards,\nExperienceCo VIP Support Team`,
         pick([25, 35, 45], seed)
       );
     } else {
       addMsg("agent",
         pick([
-          `Dear ${c.customerName},\n\nThank you for contacting Headout Support. We've received your refund request for booking ${c.bookingId}.\n\nWe understand emergencies happen. Your request is currently under review and we aim to get back to you within 24 hours. If you have any supporting documentation, feel free to attach it.\n\nKind regards,\nHeadout Customer Support`,
-          `Hi ${firstName},\n\nThank you for getting in touch. We've received your refund request for booking ${c.bookingId} — ${c.experienceName}.\n\nOur team is looking into this now and will be in touch shortly.\n\nBest,\nHeadout Support`,
+          `Dear ${c.customerName},\n\nThank you for contacting ExperienceCo Support. We've received your refund request for booking ${c.bookingId}.\n\nWe understand emergencies happen. Your request is currently under review and we aim to get back to you within 24 hours. If you have any supporting documentation, feel free to attach it.\n\nKind regards,\nExperienceCo Customer Support`,
+          `Hi ${firstName},\n\nThank you for getting in touch. We've received your refund request for booking ${c.bookingId} — ${c.experienceName}.\n\nOur team is looking into this now and will be in touch shortly.\n\nBest,\nExperienceCo Support`,
         ], seed + 3),
         pick([20, 30, 45, 60], seed)
       );
@@ -243,7 +243,7 @@ function buildMessages(c: RefundCase): TicketMessage[] {
     const followUps = [
       `I don't have formal documentation to share, but I hope you can accommodate this given my history as a customer. The ${fmt(c.refundAmount)} refund would mean a lot right now.\n\n${firstName}`,
       `Just checking in — is there any update on my case? I submitted this ${c.refundTimingHours < -6 ? "several hours" : "earlier"} and haven't heard anything further.\n\n${c.customerName}`,
-      `I want to reiterate that this was a genuine emergency and not something I take lightly. I value Headout as a platform and hope you can process this refund.\n\n${firstName}`,
+      `I want to reiterate that this was a genuine emergency and not something I take lightly. I value ExperienceCo as a platform and hope you can process this refund.\n\n${firstName}`,
       `Could you share an expected timeline? ${fmt(c.refundAmount)} is a significant amount for me and I'd appreciate knowing when to expect a decision.\n\n${c.customerName}`,
     ];
     if ((seed % 3) !== 0) {
@@ -253,7 +253,7 @@ function buildMessages(c: RefundCase): TicketMessage[] {
     const isSerial = c.refundCountLast6Months >= 10 || c.totalRefundCount >= 15;
     if (isSerial) {
       addMsg("agent",
-        `Dear ${c.customerName},\n\nThank you for your follow-up. We want to assure you that your case is receiving careful and thorough attention.\n\nOur review process includes examining your full account history alongside the circumstances you've described. We'll share a decision as soon as it's ready.\n\nThank you for your patience.\n\nHeadout Customer Support`,
+        `Dear ${c.customerName},\n\nThank you for your follow-up. We want to assure you that your case is receiving careful and thorough attention.\n\nOur review process includes examining your full account history alongside the circumstances you've described. We'll share a decision as soon as it's ready.\n\nThank you for your patience.\n\nExperienceCo Customer Support`,
         pick([280, 320, 360], seed)
       );
     }
@@ -274,7 +274,7 @@ function buildMessages(c: RefundCase): TicketMessage[] {
 
     if (isHighValue) {
       addMsg("agent",
-        `Dear ${c.customerName},\n\nThank you for reaching out. We've received your cancellation request for booking ${c.bookingId} (${c.experienceName}).\n\nGiven the value of this booking (${fmt(c.refundAmount)}), this case is being reviewed by our senior team under our high-value cancellation policy. You can expect a response within 2 hours.\n\nWe appreciate your understanding.\n\nKind regards,\nHeadout VIP Support Team`,
+        `Dear ${c.customerName},\n\nThank you for reaching out. We've received your cancellation request for booking ${c.bookingId} (${c.experienceName}).\n\nGiven the value of this booking (${fmt(c.refundAmount)}), this case is being reviewed by our senior team under our high-value cancellation policy. You can expect a response within 2 hours.\n\nWe appreciate your understanding.\n\nKind regards,\nExperienceCo VIP Support Team`,
         30
       );
       if ((seed % 2) === 0) {
@@ -286,8 +286,8 @@ function buildMessages(c: RefundCase): TicketMessage[] {
     } else {
       addMsg("agent",
         pick([
-          `Dear ${c.customerName},\n\nThank you for contacting us. We've received your cancellation request for booking ${c.bookingId}.\n\nYour case is under review. We'll be in touch with a decision within 24 hours.\n\nBest regards,\nHeadout Customer Support`,
-          `Hi ${firstName},\n\nWe've received your request to cancel booking ${c.bookingId} — ${c.experienceName}.\n\nOur team is reviewing this now. We aim to respond within 24 hours.\n\nHeadout Support`,
+          `Dear ${c.customerName},\n\nThank you for contacting us. We've received your cancellation request for booking ${c.bookingId}.\n\nYour case is under review. We'll be in touch with a decision within 24 hours.\n\nBest regards,\nExperienceCo Customer Support`,
+          `Hi ${firstName},\n\nWe've received your request to cancel booking ${c.bookingId} — ${c.experienceName}.\n\nOur team is reviewing this now. We aim to respond within 24 hours.\n\nExperienceCo Support`,
         ], seed + 3),
         pick([15, 25, 40, 60], seed)
       );
@@ -311,12 +311,12 @@ function buildMessages(c: RefundCase): TicketMessage[] {
       : "";
 
     addMsg("customer",
-      `${g}\n\nI'm writing to report a technical failure that prevented me from attending "${c.experienceName}" (Booking: ${c.bookingId}).\n\n${issue}${engNote}\n\nThis is entirely a technical failure on Headout's part. I am requesting a full refund of ${fmt(c.refundAmount)}. This was supposed to be a special outing and I am very disappointed.\n\nRegards,\n${c.customerName}`,
+      `${g}\n\nI'm writing to report a technical failure that prevented me from attending "${c.experienceName}" (Booking: ${c.bookingId}).\n\n${issue}${engNote}\n\nThis is entirely a technical failure on ExperienceCo's part. I am requesting a full refund of ${fmt(c.refundAmount)}. This was supposed to be a special outing and I am very disappointed.\n\nRegards,\n${c.customerName}`,
       0
     );
 
     addMsg("agent",
-      `Dear ${c.customerName},\n\nWe're sorry to hear about the difficulties you experienced with booking ${c.bookingId}.\n\nWe take technical issues very seriously. Your case has been escalated to our technical team for investigation. They will review the system logs for your account and the venue check-in records. We will provide a full update within 4 hours.\n\nWe sincerely apologise for the inconvenience.\n\nHeadout Support Team`,
+      `Dear ${c.customerName},\n\nWe're sorry to hear about the difficulties you experienced with booking ${c.bookingId}.\n\nWe take technical issues very seriously. Your case has been escalated to our technical team for investigation. They will review the system logs for your account and the venue check-in records. We will provide a full update within 4 hours.\n\nWe sincerely apologise for the inconvenience.\n\nExperienceCo Support Team`,
       pick([20, 30, 45], seed)
     );
 
@@ -343,7 +343,7 @@ function buildMessages(c: RefundCase): TicketMessage[] {
     );
 
     addMsg("agent",
-      `Dear ${c.customerName},\n\nThank you for reaching out ahead of your experience.\n\nWe understand the concern about the forecast. Our team monitors conditions for outdoor experiences closely and will take this into consideration. Your request is under review — we will get back to you at least 24 hours before your experience date.\n\nIn some cases, we can offer a reschedule rather than a refund. We'll discuss options with you shortly.\n\nKind regards,\nHeadout Customer Support`,
+      `Dear ${c.customerName},\n\nThank you for reaching out ahead of your experience.\n\nWe understand the concern about the forecast. Our team monitors conditions for outdoor experiences closely and will take this into consideration. Your request is under review — we will get back to you at least 24 hours before your experience date.\n\nIn some cases, we can offer a reschedule rather than a refund. We'll discuss options with you shortly.\n\nKind regards,\nExperienceCo Customer Support`,
       pick([20, 30, 45], seed)
     );
 
@@ -366,8 +366,8 @@ function buildMessages(c: RefundCase): TicketMessage[] {
 
   addMsg("agent",
     pick([
-      `Dear ${c.customerName},\n\nThank you for reaching out. We've received your refund request for booking ${c.bookingId}.\n\nYour case is under review and we aim to respond within 24 hours.\n\nBest regards,\nHeadout Customer Support`,
-      `Hi ${firstName},\n\nWe've received your request regarding booking ${c.bookingId} — ${c.experienceName}.\n\nOur team is looking into this now. We'll update you shortly.\n\nHeadout Support`,
+      `Dear ${c.customerName},\n\nThank you for reaching out. We've received your refund request for booking ${c.bookingId}.\n\nYour case is under review and we aim to respond within 24 hours.\n\nBest regards,\nExperienceCo Customer Support`,
+      `Hi ${firstName},\n\nWe've received your request regarding booking ${c.bookingId} — ${c.experienceName}.\n\nOur team is looking into this now. We'll update you shortly.\n\nExperienceCo Support`,
     ], seed + 3),
     pick([20, 35, 50], seed)
   );

@@ -82,25 +82,25 @@ const QUICK_TEMPLATES = [
     id: "ack",
     label: "Acknowledgement",
     body: (c: RefundCase) =>
-      `Dear ${c.customerName},\n\nThank you for contacting Headout Support. We have received your refund request for booking ${c.bookingId} and it is currently under review.\n\nWe aim to respond within 24 hours. We appreciate your patience.\n\nKind regards,\nHeadout Customer Support`,
+      `Dear ${c.customerName},\n\nThank you for contacting ExperienceCo Support. We have received your refund request for booking ${c.bookingId} and it is currently under review.\n\nWe aim to respond within 24 hours. We appreciate your patience.\n\nKind regards,\nExperienceCo Customer Support`,
   },
   {
     id: "info_needed",
     label: "Request More Info",
     body: (c: RefundCase) =>
-      `Dear ${c.customerName},\n\nThank you for reaching out regarding booking ${c.bookingId}.\n\nTo process your refund request, we require additional information:\n\n• A brief description of the circumstances\n• Any supporting documentation (if applicable)\n• Your preferred resolution\n\nPlease reply to this email at your earliest convenience.\n\nBest regards,\nHeadout Customer Support`,
+      `Dear ${c.customerName},\n\nThank you for reaching out regarding booking ${c.bookingId}.\n\nTo process your refund request, we require additional information:\n\n• A brief description of the circumstances\n• Any supporting documentation (if applicable)\n• Your preferred resolution\n\nPlease reply to this email at your earliest convenience.\n\nBest regards,\nExperienceCo Customer Support`,
   },
   {
     id: "approved",
     label: "Refund Approved",
     body: (c: RefundCase) =>
-      `Dear ${c.customerName},\n\nWe're pleased to inform you that your refund request for booking ${c.bookingId} has been approved.\n\nRefund amount: $${c.refundAmount.toLocaleString()}\nExpected processing time: 5–7 business days\nRefund method: Original payment method\n\nWe apologize for any inconvenience caused and hope to welcome you back to Headout soon.\n\nWarm regards,\nHeadout Customer Support`,
+      `Dear ${c.customerName},\n\nWe're pleased to inform you that your refund request for booking ${c.bookingId} has been approved.\n\nRefund amount: $${c.refundAmount.toLocaleString()}\nExpected processing time: 5–7 business days\nRefund method: Original payment method\n\nWe apologize for any inconvenience caused and hope to welcome you back to ExperienceCo soon.\n\nWarm regards,\nExperienceCo Customer Support`,
   },
   {
     id: "escalated",
     label: "Case Escalated",
     body: (c: RefundCase) =>
-      `Dear ${c.customerName},\n\nThank you for your patience regarding booking ${c.bookingId}.\n\nYour case has been escalated to our senior review team for further assessment. A dedicated specialist will contact you within 4–6 hours with a resolution.\n\nWe appreciate your understanding.\n\nBest regards,\nHeadout Senior Support Team`,
+      `Dear ${c.customerName},\n\nThank you for your patience regarding booking ${c.bookingId}.\n\nYour case has been escalated to our senior review team for further assessment. A dedicated specialist will contact you within 4–6 hours with a resolution.\n\nWe appreciate your understanding.\n\nBest regards,\nExperienceCo Senior Support Team`,
   },
 ];
 
@@ -230,7 +230,7 @@ export function TicketChatView({ refundCase }: TicketChatViewProps) {
     const newMsg: TicketMessage = {
       id: `msg-sent-${Date.now()}`,
       from: "Sarah Agent (You)",
-      fromEmail: "support@headout.com",
+      fromEmail: "support@experienceco.com",
       fromRole: "agent",
       to: refundCase.customerEmail,
       subject: `Re: ${ticket.subject}`,
