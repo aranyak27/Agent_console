@@ -1,0 +1,108 @@
+The Agent Console is your other Replit project, so I can't edit it directly from here. What I can do is get the correct API URL for this project and generate a complete, ready-to-paste integration file you can drop into the Agent Console.
+
+First, let me get this project's public URL and check if it needs to be deployed for the Agent Console to reach it:
+
+
+3 actions
+The Agent Console is a deployed app at agent-console-headout.replit.app. For it to reach this project's API reliably, this project also needs to be deployed to get a stable public URL. Let me deploy it first, then generate the exact integration file:
+
+
+Planning integration component generation (7 seconds)
+While that deploys, let me generate the exact integration file for the Agent Console. I'll write a self-contained component they can drop in:
+
+
+2 actions
+It's React/Vite — same stack. Let me generate a complete integration file the user can drop into the Agent Console project:
+
+
+4 actions
+The integration file is ready. Let me present it:
+
+
+2 actions
+The file is saved at integration-export/VoiceAgentTickets.tsx — you can find it in the file explorer on the left. Here's exactly what to do once the deployment finishes:
+
+Step 1 — Copy the file
+Open integration-export/VoiceAgentTickets.tsx from the file explorer and copy its contents.
+
+Step 2 — Paste into your Agent Console project
+In your Agent Console Replit, create a new file at src/components/VoiceAgentTickets.tsx and paste it in.
+
+Step 3 — Set your deployed URL
+At the top of the file, change this one line:
+
+const VOICE_AGENT_API = "https://YOUR_DEPLOYED_VOICE_AGENT_URL/api";
+
+Replace YOUR_DEPLOYED_VOICE_AGENT_URL with the .replit.app URL you'll get after this project finishes deploying (the blue "Copy link" button in the deploy dialog).
+
+Step 4 — Render the component
+In whatever page or layout you want it to appear in your Agent Console, add:
+
+import { VoiceAgentTickets } from "./components/VoiceAgentTickets";
+// ...somewhere in your JSX:
+<VoiceAgentTickets />
+
+What the component does:
+
+Auto-polls for new voice agent tickets every 30 seconds
+Shows priority badges, status tags, and timestamps
+"Pick Up", "Resolve", and "Close" buttons that call back to this project's API in real-time — so when an agent resolves a case in your console, it immediately updates here in the Tickets dashboard
+Once the deploy completes you'll have a stable URL to paste in. Want me to handle anything else in the meantime?
+
+
+Checkpoint made
+13 minutes ago
+
+Worked for 2 minutes
+Wher is the file
+
+9 minutes ago
+
+1 message & 1 action
+
+Checkpoint made
+9 minutes ago
+step 4 explain pls
+
+Just now
+
+Planning explanation of Step 4
+Sure! Step 4 is just about telling the Agent Console app to actually show the component somewhere on screen.
+
+Here's a concrete example. In your Agent Console project, find the main page file — it's likely something like src/App.tsx or src/pages/Home.tsx. It will have some existing JSX that renders the current UI.
+
+You add two things:
+
+At the top of the file (with the other imports):
+
+import { VoiceAgentTickets } from "./components/VoiceAgentTickets";
+
+Somewhere inside the returned JSX (wherever you want the tickets to appear on screen):
+
+<VoiceAgentTickets />
+
+For example, if the file currently looks like this:
+
+export default function App() {
+  return (
+    <div>
+      <h1>Agent Console</h1>
+      {/* ... existing content ... */}
+    </div>
+  );
+}
+
+You'd change it to:
+
+import { VoiceAgentTickets } from "./components/VoiceAgentTickets";
+export default function App() {
+  return (
+    <div>
+      <h1>Agent Console</h1>
+      {/* ... existing content ... */}
+      <VoiceAgentTickets />
+    </div>
+  );
+}
+
+That's it — <VoiceAgentTickets /> is a self-contained panel. It'll start polling for tickets immediately when the page loads. You can place it anywhere — below the existing content, in a sidebar, or on its own dedicated tab/route.
