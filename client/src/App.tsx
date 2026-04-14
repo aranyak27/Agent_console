@@ -8,6 +8,9 @@ import AgentWorkspace from "@/pages/AgentWorkspace";
 import Dashboard from "@/pages/Dashboard";
 import VoiceTickets from "@/pages/VoiceTickets";
 import NotFound from "@/pages/not-found";
+import { VoiceAgentTickets } from "@/components/VoiceAgentTickets";
+
+
 
 function Router() {
   return (
@@ -32,5 +35,8 @@ function App() {
     </QueryClientProvider>
   );
 }
+
+// Somewhere inside the JSX return:
+<VoiceAgentTickets />
 
 export default App;
