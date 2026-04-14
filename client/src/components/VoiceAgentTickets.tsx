@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 
-const VOICE_AGENT_API = "https://voice-agent-aranyaktripathi.replit.app";
+const VOICE_AGENT_API = "https://8ef87c32-8ae2-4996-8f04-3eb5b4aec44b-00-2mizyyytfdfo.worf.replit.dev/api";
 const POLL_INTERVAL_MS = 30_000;
 
 type TicketStatus = "open" | "in_progress" | "resolved" | "closed";
