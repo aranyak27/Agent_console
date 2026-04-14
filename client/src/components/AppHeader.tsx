@@ -1,4 +1,4 @@
-import { Moon, Sun, LayoutDashboard, Shield } from "lucide-react";
+import { Moon, Sun, LayoutDashboard, Shield, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "@/components/ThemeProvider";
 import { useLocation } from "wouter";
@@ -44,6 +44,16 @@ export function AppHeader({ onNavigateDashboard, highRiskCount, medRiskCount }: 
           >
             <LayoutDashboard className="w-3 h-3 mr-1" />
             Dashboard
+          </Button>
+          <Button
+            variant={location === "/voice-tickets" ? "secondary" : "ghost"}
+            size="sm"
+            className="h-7 text-xs"
+            onClick={() => navigate("/voice-tickets")}
+            data-testid="nav-voice-tickets"
+          >
+            <Phone className="w-3 h-3 mr-1" />
+            Voice Tickets
           </Button>
         </nav>
       </div>

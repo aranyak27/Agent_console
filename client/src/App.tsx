@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import AgentWorkspace from "@/pages/AgentWorkspace";
 import Dashboard from "@/pages/Dashboard";
+import VoiceTickets from "@/pages/VoiceTickets";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -13,6 +14,7 @@ function Router() {
     <Switch>
       <Route path="/" component={AgentWorkspace} />
       <Route path="/dashboard" component={Dashboard} />
+      <Route path="/voice-tickets" component={VoiceTickets} />
       <Route component={NotFound} />
     </Switch>
   );
